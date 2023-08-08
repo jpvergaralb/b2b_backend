@@ -50,6 +50,7 @@ Task.init({
     }
   }
 }, {
+  sequelize,
   timestamps: true, 
   paranoid: true
 })
