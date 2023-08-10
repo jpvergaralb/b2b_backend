@@ -256,6 +256,8 @@ Ahora, si la solicitud pasa por todos los middlewares
 
 ### Cosas por mencionar
 
+#### BASE DE DATOS Y LA CONEXION
+- Comenzar escribiendo una semi charla motivacional del estilo: "En este punto del proyecto se pueden tener muchos problemas, con incontables causas, pero no hay que preocuparse, al final del dia resolver estos problemas nos da caracter y nos hace mejores programadores. Asi que no hay que desanimarse y seguir adelante. Ahora, con eso dicho, vamos a hablar sobre la base de datos y como conectarnos a ella."
 - Hablar sobre conexiones de la base da datos. En general podemos tener dos enfoques: 
     - Cliente unico (un solo cliente se conecta a la base de datos)
       Este es util solo cuando quiero una unica conexion, posiblemente util
@@ -274,23 +276,46 @@ Ahora, si la solicitud pasa por todos los middlewares
   6. Darle permisos al usuario sobre la base de datos con `GRANT ALL PRIVILEGES ON DATABASE nombre_de_la_base_de_datos TO nombre_de_usuario;`
 - Ahora nuevamente hay que tomar una decision. Sobre si usar una arquitectura para transacciones 
   o usar consultas simples porque no es necesario usar transaccions en este caso. Dejar clara la diferencia entre transaccion y consultas simples
-- Traer las instancias neceasarias para el pool y guardar la configuracion de la base de datos en
-su propio archivo `src/db/config.js`
+- quiza mencionar que psql funciona como quiere en wsl y puede ser una mejor y mas sconsistente alternativa usar simplemente windows o docker. La instalacion: https://www.enterprisedb.com/postgresql-tutorial-resources-training-1?uuid=c70fc67b-ca1f-4dc2-b73b-ccb7367fb6b8&campaignId=Product_Trial_PostgreSQL_15
+Luego sera necesario agregar psql a las variables de enterno. Para esto:
+a. Haz clic derecho en el ícono de "Este equipo" o "Mi PC" y selecciona "Propiedades".
+b. Haz clic en "Configuración avanzada del sistema".
+c. Haz clic en el botón "Variables de entorno".
+d. En "Variables del sistema", busca la variable Path y selecciona "Editar".
+e. Haz clic en "Nuevo" y añade la ruta del directorio bin de tu instalación de PostgreSQL, por ejemplo, C:\Program Files\PostgreSQL\<version>\bin\.
+f. Haz clic en "Aceptar" en todas las ventanas para guardar los cambios.
+g. Cierra y vuelve a abrir tu símbolo del sistema o PowerShell y prueba nuevamente ejecutar psql -U postgres.
+- En mi caso el puerto donde fue instalado postgres fue el 5433, por algun motivo al correr psql -U postgres no funcionaba, entonces al ejecutarlo tuve que espeecificar el puerto: `psql -U postgres -p 5433`
+- Lo del puerto esmuy importante tenerlo claro porque luego esa informacion es usada al momento de conectarnos a la base de datos desde node. Algunas configuraciones por defecto no traen el argumento de port, este por defecto es 5432 y en la mayoria de los casos funciona, pero en mi caso no funciono y tuve que especificarlo. En concreto queo asi:
+
+```js
+import { Sequelize } from 'sequelize'
+import dotenv from "dotenv"
+dotenv.config()
+
+export const sequelize = new Sequelize(
+  process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, 
+  {
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  dialect: 'postgres'
+})
+
+try {
+  await sequelize.authenticate()
+  console.log('Connection has been established successfully.')
+} catch (error) {
+  console.error('Unable to connect to the database:', error)
+}
+```
+
 - Al parecer es mejor usar sequelize: `npm install sequelize pg pg-hstore `: aqui sequelize es el orm y pg junto con pg-hstore son los drivers de postgresql
 https://www.digitalocean.com/community/tutorials/how-to-use-sequelize-with-node-js-and-mysql
 https://sequelize.org/docs/v6/getting-started/
 - Como nota, sequelize usa pools de conexiones por defecto
 - No olvidar iniciar el servicio de postgres con `sudo service postgresql start`
-- Adicionalmente segun la documentacion podemos testear la conexion con 
-```js
-try {
-  await sequelize.authenticate();
-  console.log('Connection has been established successfully.');
-} catch (error) {
-  console.error('Unable to connect to the database:', error);
-}
-```
-- luego solo exportamos la instancia de sequelize
+
+- luego solo exportamos la instancia de sequelize y la referenciamos donde sea que la necesitemos usar. Por ejemplo siempre va en el parametro de opciones al crear un modelo. De esa forma sequelize sabe a que base de datos conectarse.
 #### Implementacion de Modelos
 - En esencia los modelos son tablas de la base de datos. En sequelize se definen como clases que extienden de `Model` y se definen sus atributos y metodos. Luego se exporta el modelo y se usa en el controlador.
 - En general hay dos formas de definir un modelo:
@@ -380,16 +405,65 @@ User.init({
 ```
 - Mencionar que en las opciones del init siempre debemos poner la instancia sobre la cual instanciamos la base datos. Ademas es buena practica agregar el campo modelName, por ejemplo para el modelo User, podemos modelName: 'user'
 
-### Cosas por hacer
+- Mencionar el razonamiento de las asociaiones y que esta mejor hacerlas en su propio archivo "models.js".
+
+
+#### Seeds
+- Mencionar el uso de seeders: 
+    1. instalar sequelize-cli: `npm install --save-dev sequelize-cli`
+    2. correr `npx sequelize-cli seed:generate --name demo-data`. Esto creara un archivo en la carpeta seeders con el nombre demo-data. Este archivo es un template para crear seeders.
+- En esencia las seeds son migraciones, por lo tanto tienen metodos up y down. Ahora, para correr estos metoos tenemos: `npx sequelize-cli db:seed:all` y para deshacerlos `npx sequelize-cli db:seed:undo:all`
+- Entonces todo lo que pongamos en up se creara al correr `npx sequelize-cli db:seed:all` y todo lo que pongamos en down se deshara al correr `npx sequelize-cli db:seed:undo:all`. Entonces los datos "test" iran dentro del metodo up. Ahora debemos correr el siguiente comando para poder ejecutar las seeds: `npx sequelize-cli init`. Esto creara un archivo de configuracion para la base de datos y lo debemos ajustar para nuestro proyecto. El problema es que por defecto este archivo es un `.json`, y ahi no podemos usar variables de entorno. Ahora, si vamos al `index.cjs` que configura todo esto, vamos a ver que el `config.json` simplemente se trae con un `require`, pero lamentablemente esto no es sufuciente. Por detras `sequelize` sigue "apuntando" a un archivo de extension `json`, por lo tanto lo que hay que hacer es crear un nuevo archivo `.sequelizerc` y ahi especificar ciertas rutas. En particular quedaria asi:
+```.squelizerc
+const path = require('path');
+
+module.exports = {
+  'config': path.resolve('config', 'config.cjs'),
+  'models-path': path.resolve('models'),
+  'seeders-path': path.resolve('seeders'),
+  'migrations-path': path.resolve('migrations')
+};
+```
+Por otro lado, algo muy importante y particular para mi caso, como estoy trabajando con un puerto que no es el `5432`, entonces tambien debo especificarlo aqui, tal como lo hiccimos para `db.js`. En particular, `config.cjs` (la extension `.cjs` es para crear modulos de `commonjs` en configuracion `ES6`) quedaria asi:
+```js
+require('dotenv').config()
+
+module.exports = {
+    development: {
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        port: process.env.DB_PORT,
+        host: process.env.DB_HOST,
+        dialect: 'postgres',
+    }
+}
+```
+- FINALMENTE PODEMOS HACER SEEDS, que en esencia son migraciones, uno de los puntos mas fundamentales de una base de datos.
+- Para seguir con las seeds, basicamente sirven para poblar la base de datos con los datos que sea que queramos poner. En general las seeds tienen dos metodos: `up` y `down`. Intuitivamente cuando hacemos `npx sequelieze-cli db:seed:all` ejecutamos el metodo up, y cuando hacemos `npx sequelize-cli db:seed:undo:all` se eecuta el metodo `down`. Entonces los datos que queramos rellenar deben ir en `up` y cuando corramos `down`, estos se borraran. 
+- Una cosa a considerar es que en nuestros modelos pusimos `timestamps: true`. Esto hara que las columnas `updatedAt` y `createdAt` se rellenen automaticamnete, pero en las `seeds` esta info debemos ponerla manualmente, con `Date.now()`.
+
+
+- Respecto a las migraciones, pasaron mil cosas pero en esencia hay que:
+  1. Tener mucho ojo con poner bien las variables de entorno (XD)
+  2. Al momento de hacer el `npx sequelize-cli init` se crean cuatro directorios nuevos: `config`, `migrations`, `models` y `seeders`. Toda la configuracion de la base de datos se guarda en config, basicamente lo mismo que hicismo para conectarnos en `db.js`. Luego aca hay un ligero problema, o potencial problema y es que 
+
+
+#### Migraciones
+
+
+
+- ### Cosas por hacer
 
 - Conectar a base de datos postgresql [done]
 - Agregar sequelize como ORM [done]
-- Crear tres modelos basicos: User, Subject, Task
+- Crear tres modelos basicos: User, Subject, Task [x]
 - Crear asociaciones entre los modelos: User hasMany Subject, Subject hasMany Task, Task belongsTo Subject, Subject belongsTo User [x]
 
-- Agregar migraciones para crear las tablas en la base de datos
-- Agregar seeders para poblar la base de datos
-- Agregar validaciones a los modelos
+- Agregar seeders para poblar la base de datos [x]
+- Agregar validaciones a los modelos [x]
+- Agregar migraciones para crear las tablas en la base de datos 
+- Agregar CI/CD
 - Preparar terreno para autenticacion (bcrypt, jsonwebtoken, cookie-parser, cors)
 - Configurar cookies y cors
 - Actualizar el modelo de User para tener un metodo que verifique si la contraseña es correcta
