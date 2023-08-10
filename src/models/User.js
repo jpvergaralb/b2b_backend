@@ -1,4 +1,5 @@
 import { Model, DataTypes } from 'sequelize'
+import { sequelize } from '../db/db.js'
 
 export class User extends Model {}
 
@@ -43,5 +44,8 @@ User.init({
 }, {
   sequelize,
   timestamps: true, 
-  paranoid: true
+  paranoid: true,
+  tableName: 'users',
+  modelName: 'User'
 })
+

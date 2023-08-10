@@ -1,6 +1,7 @@
 import {Model, DataTypes} from "sequelize"
 import { sequelize } from "../db/db.js"
-
+import { User } from "./User.js"
+import { Task } from "./Task.js"
 
 export class Subject extends Model {}
 
@@ -14,7 +15,7 @@ Subject.init({
   },
   category: {
     type: DataTypes.STRING,
-    allowNull: False, 
+    allowNull: false, 
     validate: {
       min: 5
     }
@@ -29,5 +30,8 @@ Subject.init({
 }, {
   sequelize,
   timestamps: true, 
-  paranoid: true
+  paranoid: true,
+  tableName: 'subjects',
+  modelName: 'Subject'
 })
+

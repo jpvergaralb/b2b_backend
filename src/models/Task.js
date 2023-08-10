@@ -1,4 +1,5 @@
 import {Model, DataTypes} from "sequelize"
+import { sequelize } from "../db/db.js"
 
 export class Task extends Model {}
 
@@ -12,7 +13,7 @@ Task.init({
   },
   category: {
     type: DataTypes.STRING,
-    allowNull: False, 
+    allowNull: false, 
     validate: {
       min: 5
     }
@@ -52,5 +53,7 @@ Task.init({
 }, {
   sequelize,
   timestamps: true, 
-  paranoid: true
+  paranoid: true,
+  tableName: 'tasks',
+  modelName: 'Task'
 })
