@@ -11,9 +11,6 @@ process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD,
 })
   
 
-
-
-
 try {
   await sequelize.authenticate()
   console.log('Connection has been established successfully.')

@@ -450,9 +450,16 @@ module.exports = {
 
 
 #### Migraciones
+- Hay un gran tema con las migraciones. En primer lugar, al igual que sync, son una manera de hacer modifiaciones a la base de datos, como agregar nuevos modelos o incluso modificar informacion sobre una tabla (modelo) ya existente. En terminos practicos, tanto sync() como migraciones logran lo mismo, pero de diferentes maneras. Esto ultimo es clave, ya que NO se debe usar juntos. A nivel bajo de codigo funcionan de maneras fundamentalmente diferentes y usarlas en conjunto podria llevar a cabo problemas de consistencia.
+
+- Ahora nace la pregunta: cual es mejor y por que. Antes de pasar a lleno, definamos bien que hace exactamente cada una y como.
+
+1. Sync(): basicamente definimos los modelos en codigo, manualmente. Ademas podemos definir las asociaciones alli mismo tal como mencione antes, de la forma `Model1.HasMany(Model2, {foreingKey: 'model1Id'})` y `Model2.HasOne(Model1, {foreingKey: 'model1Id'})`, por ejemplo. Esto es aceptable a nivel de desarrollo, pero tiene el problema que es propenso a errores.
+
+2. Migraciones: con migraciones la cosa cambia un poco. En el fondo, hacemos todos los cambios grandes a traves de comandos en la consola. Por ejemplo para crear un modelo con ciertos atributos podemos ejecutar el comando `npx sequelice-cli model:generate --name Model --attributes firstColumn:type,secondColumn:type,...` Tambien, a traves del mismo formato de comandos por consola, podemos hacer cambios al alguna tabla en especifico, como por ejemplo modificar alguna columna, su tipo, que se yo. Esto es una increible ventaja, porque por cada migracion, se crea un archivo de migracion que representa exactamente a ese cambio. En esta linea, dentro de cada migracion existen dos metodos: `up` y `down`. Esto significa que podemos hacer y deshacer la migracion muy facilmente. Entonces podemos tener algo asi como un `git` para la base de datos, donde podemos versionar cambios, revertirlos, deshacerlos, etc. En general la forma en que se trabaja con la base de datos cambia un poco, respecto a si usaramos `sync()`. Por ejemplo ahora si dos modelos estan relacionados entre si, ademas de hcaer la asociacion respectiva, habria que ademas agregar una opcion extra para la columna que se quiera agregar, que debe hacer referencia al modelo con el cual se relaciona. Ahi mostrare un ejemplo.
 
 
-
+3. Reestructuracion del codigo: Ya no necesitamos `db.js`. Es mas, ya ni siqueira necitamos el archivo `db.js` que exporta nuestra instancia de conexion a la base de datos. Ahora podemos simplemente hacer todo a traves de migraciones usando la conexion que se crea por defecto en `models/index.cjs`. Entonces: debemos eliminar el `sync()` y debemos eliminar el archivo `db.js`.
 - ### Cosas por hacer
 
 - Conectar a base de datos postgresql [done]
