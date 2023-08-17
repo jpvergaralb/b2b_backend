@@ -460,6 +460,34 @@ module.exports = {
 
 
 3. Reestructuracion del codigo: Ya no necesitamos `db.js`. Es mas, ya ni siqueira necitamos el archivo `db.js` que exporta nuestra instancia de conexion a la base de datos. Ahora podemos simplemente hacer todo a traves de migraciones usando la conexion que se crea por defecto en `models/index.cjs`. Entonces: debemos eliminar el `sync()` y debemos eliminar el archivo `db.js`.
+
+#### Sintaxis dentro de migraciones
+Podemos hacer muchisimas cosas. Aqui muestro las que vaya encontrandome
+1. Podemos crear un base de datos directamente con `npx sequelize-cli db:create`
+  1.1 Si ya existe una db con ese nombre tira un error
+  1.2 Si no existe entonces se creara (notar que el nombre viene en los parametros de conexion, en la key `database`)
+
+2. Ahora, podemos crear modelos (tablas) muy facilmente con el comando: `npx sequelize-cli model:create --name Model --attributes column1:type,column2:type,...`
+
+3. En general las migraciones son archivos que tienen alguna instruccion adentro que reflejaran algun cambio en la base de datos. La sintaxis general es `npx sequelize-cli migration:generate --name nombre_del_archivo`. Luego dentro de este archivo tenemos dos metodos maestros: `up` y `down`. En el `up` ponemos algun metodo que queramos. 
+
+4. Metodos mas comunes:
+reateTable: Crea una nueva tabla.
+dropTable: Elimina una tabla.
+renameTable: Renombra una tabla.
+addColumn: Agrega una nueva columna a una tabla.
+removeColumn: Elimina una columna de una tabla.
+renameColumn: Renombra una columna.
+changeColumn: Cambia el tipo o las propiedades de una columna.
+addIndex: Agrega un índice a una tabla.
+removeIndex: Elimina un índice de una tabla.
+
+#### Agregue un linter: eslint
+Para instalarlo use `npm i eslint -D`
+Luego hice `npx eslint --init` y elegi la config de `airbnb`
+despues se puede agregar un script en package.json para que se linteen todos los archivos de una vez: 
+`"lint": "eslint 'src/**/*.{js,jsx}",`
+
 - ### Cosas por hacer
 
 - Conectar a base de datos postgresql [done]
