@@ -482,11 +482,75 @@ changeColumn: Cambia el tipo o las propiedades de una columna.
 addIndex: Agrega un índice a una tabla.
 removeIndex: Elimina un índice de una tabla.
 
+#### Asociaciones a traves de migraciones
+En general existen tres tipos de asociaciones: uno a uno (has one: belongs to), uno a muchos (has many : belongs to) o muchos a muchos (has many: belongs to many)
+
+1. Uno a uno: En este caso, por ejemplo, un usuario tiene un perfil. Entonces el usuario tiene un perfil y el perfil pertenece a un usuario. En este caso, el usuario tiene un perfilId que hace referencia al id del perfil. Entonces la asociacion se veria algo asi:
+```js
+User.hasOne(Profile)
+Profile.belongsTo(User, {foreignKey: 'profileId'})
+```
+Respect al parametro `foreingKey`, este representara la columna que los "linkeara" a ambos. Es posible no poder este parametro y sequelize inferira el nombre de la columna, pero es mejor especificarlo.
+
+2. Uno a muchos: En este caso, por ejemplo, un usuario tiene muchas tareas. Entonces el usuario tiene muchas tareas y la tarea pertenece a un usuario. La asociacion funciona igual que el caso anterior, sintacticamente hablando. La diferencia es que aqui la relacion como tal es difernete.
+```js
+User.hasMany(Task)
+Task.belongsTo(User, {foreignKey: 'userId'})
+```
+
+3. Muchos a muchos: En este caso, por ejemplo, un alumno tiene muchas clases y cada clase tiene muchos alumnos. Entonces la asociacion se veria algo asi:
+```js
+Student.belongsToMany(Class, { through: 'StudentClass' })
+Class.belongsToMany(Student, { through: 'StudentClass' })
+```
+Aca hay una gran diferencia. En este tipo de asociaciones es necesaria una tabla intermedia que contiene los ids de los modelos involucrados.
+
+
+Ahora, si estamos trabajando con asociaciones, entonces ademas de definir el tipo de asociacion, como acabamos de mostrar, hay que agregar manualmente la columna a la tabla que haga referencia al id del modelo con el cual exista la asociacion. Pero, en que tabla exactamente? y donde? en las migraciones o en modelo? Esas son preguntas muy importantes
+
+1. En que tabla debo agregar una referencia? 
+Primero que todo, la referencia debe ir en solo una tabla, y a modo de regla general, debe ir en la tabla que define el belongsto. Recordar que solo debemos poner referencias en 1:1 y 1:n. En este caso, las referencias deberian ir en :1 y en :n. 
+
+2. donde? en migraciones o modelo? 
+La idea es que en ambas, aunque con ponerlas en una basta, pero para hacer nuestro programa mas robusto es ideal ponerlo en ambas. Aca igual es clave tener algo claro: las migraciones trabajan a nivel de base de datos, mientras que los modelos trabajan a nivel de codigo. Entonces, si queremos que nuestra base de datos sea consistente con nuestro codigo, debemos poner las referencias en ambos lados.
+
+3. Finalmnete, como se ven estas "referencias" de las que tanto he hablado. En terminos practicos son simplmente una columna de esta forma:
+
+```js
+
+references: {
+  model: 'ModelName',
+  key: 'id' // <= este seria el primary key de la tabla ModelName
+}
+
+```
+
+* Para este proyecto se intentara modelar una universidad y se tendran los siguientes modelos: User, Course, Tasks, TaskTemplate 
+1. Cada alumno esta en uno o mas cursos y cada curso tiene uno o mas alumnos: User - Course : M - N
+2. Cada curso tiene una o mas tareas y cada tarea pertenece a un curso en especifco: Course - TaskTemplate : 1 - N
+3. Cada alumno en un curso tiene una o mas tareas que realizo y cada una de estas tareas pertenece a un unico alumno: User - Task : 1 - N
+4. Cada tarea proviene de un unico template y un template puede originar multiples tareas: TaskTemplate - Task : 1 - N. Con esta asociacion, si quiero saber todas las tareas que provienen de un template, puedo hacer `taskTemplate.getTasks()`. Y si quiero saber de que template proviene una tarea, puedo hacer `task.getTaskTemplate()`
+
+Consideraciones para cada asociacion.
+1. Cuando se elimina un usuario no quiero eliminar el curso y cuando se elimina un curso no quiero eliminar un usuario
+
+2. Cuando se elimina un curso, quiero eliminar a las tareas template, eso es correcto. Entonces pondre un `onDelete: 'cascade'` en `TaskTemplate.BelongsTo(Course, onDelete: 'CASCADE')`
+
+3. Cuando se elimina un usuario quiero eliminar todas sus tareas, eso es correcto amigo. Entonces, pondre un `onDelete: 'cascade'` en `Task.BelongsTo(User, onDelete: 'CASCADE')`
+
+4. Cuando se elimina un TaskTemplate quiero eliminar todas las tareas asociadas. Seria como cancelar la tarea. En ese caso pondre  un `onDelete: 'cascade'` en `Task.BelongsTo(TaskTemplate, onDelete: 'CASCADE')`. 
+
+Al hacer asociaciones se crean metodos automaticamente. Por ejemplo si tenemos un usuario y queremos obtener sus tareas, podemos hacer `user.getTasks()`. Y asi un monton de metodos.
+
 #### Agregue un linter: eslint
 Para instalarlo use `npm i eslint -D`
 Luego hice `npx eslint --init` y elegi la config de `airbnb`
 despues se puede agregar un script en package.json para que se linteen todos los archivos de una vez: 
 `"lint": "eslint 'src/**/*.{js,jsx}",`
+
+#### Seeding
+para probar que todo este en orden se puede rellenar la base de datos con valores por defecto. Esto puede ser muy tedioso hacerlo a mano, por ello usaremos una libreria que genera datos random llamada `faker-js`. Se instala con `npm i @faker-js/faker -D`.
+Ahora para crear un seed file podemos correr el comando `npx sequelize-cli seed:generate --name file-name`. Luego para correr las seeds se usa `npx sequelize-cli seed:all`
 
 - ### Cosas por hacer
 
