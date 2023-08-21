@@ -542,11 +542,17 @@ Consideraciones para cada asociacion.
 
 Al hacer asociaciones se crean metodos automaticamente. Por ejemplo si tenemos un usuario y queremos obtener sus tareas, podemos hacer `user.getTasks()`. Y asi un monton de metodos.
 
+**ALGO CLAVE** 
+> ES NECESARIO PONER LA REFERENCIA DE LA KEY FORANEA TANTO EN EL SOURCE COMO EN EL TARGET. USUALMENTE EN LAS DOCUMENTACIONES SOLO SE PONE EN UNO. ESTO NO FUNCIONARA, AL MENOS NO SIEMPRE.  
+
 #### Agregue un linter: eslint
 Para instalarlo use `npm i eslint -D`
 Luego hice `npx eslint --init` y elegi la config de `airbnb`
 despues se puede agregar un script en package.json para que se linteen todos los archivos de una vez: 
 `"lint": "eslint 'src/**/*.{js,jsx}",`
+
+### Registrando usaurios a cursos
+Aca necesitaremos tanto id del usuario como informacion sobre el curso. Una forma es enviar un json con la informacion del curso y el id del usuario. Otra forma es enviar el id del usuario en los headers y la informacion del curso en el body. 
 
 #### Seeding
 para probar que todo este en orden se puede rellenar la base de datos con valores por defecto. Esto puede ser muy tedioso hacerlo a mano, por ello usaremos una libreria que genera datos random llamada `faker-js`. Se instala con `npm i @faker-js/faker -D`.
