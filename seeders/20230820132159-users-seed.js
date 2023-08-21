@@ -1,22 +1,21 @@
-'use strict';
-const faker = require('faker');
+const { faker } = require('@faker-js/faker')
 
 function createRandomUser() {
-  const sex = faker.person.sexType();
-  const firstName = faker.person.firstName(sex);
-  const lastName = faker.person.lastName();
-  const email = faker.internet.email();
+  const firstName = faker.person.firstName()
+  const lastName = faker.person.lastName()
+  const email = faker.internet.email()
+  const password = faker.internet.password({prefix: "$"})
+  const createdAt = faker.date.past()
+  const updatedAt = faker.date.recent()
 
   return {
-    _id: faker.string.uuid(),
-    avatar: faker.image.avatar(),
-    birthday: faker.date.birthdate(),
     email,
     firstName,
     lastName,
-    sex,
-    subscriptionTier: faker.helpers.arrayElement(['free', 'basic', 'business']),
-  };
+    password,
+    createdAt,
+    updatedAt
+  }
 }
 
 /** @type {import('sequelize-cli').Migration} */
@@ -37,7 +36,7 @@ module.exports = {
       fakeUsers.push(createRandomUser())
     }
 
-    await queryInterface.bulkInsert('Users', fakeUsers)
+    await queryInterface.bulkInsert('users', fakeUsers)
   },
 
   async down (queryInterface, Sequelize) {
@@ -50,4 +49,4 @@ module.exports = {
 
       await queryInterface.bulkDelete('Users', null)
   }
-};
+}
