@@ -17,8 +17,4 @@ app.use('/courses', courseRouter);
 app.use('/tasks', taskRoutes);
 
 // Server
-const port = process.env.PORT || 8000;
-app.listen(port, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Running server on ${port}...`);
-});
+module.exports = app
