@@ -9,6 +9,7 @@ const app = express();
 
 // Middlewares
 app.use(requestLoggerMiddleware);
+app.use(express.json());
 
 // Routes
 app.use('/users', userRoutes);
