@@ -5,17 +5,19 @@ const {
   postUser,
   updateUser,
   deleteUser,
+  inscribeUserToCourse
 } = require('../controllers/user.controllers');
 
 const userRoutes = express.Router();
 
 userRoutes.route('/')
   .get(getUsers)
-  .post(postUser);
-
+  .post(postUser)
+  
 userRoutes.route('/:id')
   .get(getUser)
   .put(updateUser)
-  .delete(deleteUser);
+  .delete(deleteUser)
+  .post(inscribeUserToCourse)
 
 module.exports = userRoutes;
