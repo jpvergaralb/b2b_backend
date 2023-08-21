@@ -558,6 +558,11 @@ Aca necesitaremos tanto id del usuario como informacion sobre el curso. Una form
 para probar que todo este en orden se puede rellenar la base de datos con valores por defecto. Esto puede ser muy tedioso hacerlo a mano, por ello usaremos una libreria que genera datos random llamada `faker-js`. Se instala con `npm i @faker-js/faker -D`.
 Ahora para crear un seed file podemos correr el comando `npx sequelize-cli seed:generate --name file-name`. Luego para correr las seeds se usa `npx sequelize-cli seed:all`
 
+
+#### Preparacion para el CI/CD
+##### Antes de implementar CI:
+Para este paso necesitamos primero tener pruebas. Para ello usaremos `jest` y `supertest`. Este ultimo sirve para testear metodos `HTTP` lo cual nos permitira testear nuestros endpoints. Estare siguiendo la guia recomendada para express propuesta en la documentacion oficial de jest.
+
 - ### Cosas por hacer
 
 - Conectar a base de datos postgresql [done]

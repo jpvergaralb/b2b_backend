@@ -1,19 +1,20 @@
-//we import whatever is exported in the index.js file in the models folder
+// we import whatever is exported in the index.js file in the models folder
 const db = require('../../models');
+
 const { User, Course } = db;
 
 const getUsers = async (req, res) => {
   try {
-    const users = await User.findAll({ include: 'tasks'});
+    const users = await User.findAll();
     res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({"error": error});
+    res.status(500).json({ error });
   }
 };
 
 const getUser = async (req, res) => {
   try {
-    //this will get the user and all of its associated tasks
+    // this will get the user and all of its associated tasks
     const user = await User.findByPk(req.params.id);
     const tasks = await user.getTasks();
     const courses = await user.getCourses();
@@ -21,7 +22,6 @@ const getUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error });
   }
-
 };
 
 const postUser = async (req, res) => {

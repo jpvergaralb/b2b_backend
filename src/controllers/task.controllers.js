@@ -1,5 +1,6 @@
 const db = require('../../models');
-const Task = db.Task;
+
+const { Task } = db;
 
 const getTasks = async (req, res) => {
   res.send('This will fetch all tasks');
@@ -7,7 +8,7 @@ const getTasks = async (req, res) => {
 
 const getTask = async (req, res) => {
   try {
-    //get task and its tempalte
+    // get task and its tempalte
     const task = await Task.findByPk(req.params.id);
     const taskTemplate = await task.getTaskTemplate();
     res.status(200).json({ task, taskTemplate });
