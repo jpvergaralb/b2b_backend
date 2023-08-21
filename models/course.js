@@ -11,9 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Course.belongsToMany(models.User, {through: 'usercourses'})
+      Course.belongsToMany(models.User, {
+        through: 'usercourses', 
+        foreignKey: 'courseId'
+      })
 
-      Course.hasMany(models.TaskTemplate)
+      Course.hasMany(models.TaskTemplate, {foreignKey: 'courseId'})
     }
   }
   Course.init({

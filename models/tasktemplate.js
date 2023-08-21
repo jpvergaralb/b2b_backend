@@ -16,7 +16,9 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE'
       })
 
-      TaskTemplate.hasMany(models.Task)
+      TaskTemplate.hasMany(models.Task, {
+        foreignKey: 'taskTemplateId',
+      })
     }
   }
   TaskTemplate.init({
