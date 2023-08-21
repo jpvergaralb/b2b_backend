@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   User.init({
     firstName: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
         notEmpty: {
           msg: 'Please enter your first name.'
@@ -33,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     lastName: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
         notEmpty: {
           msg: 'Please enter your first name.'
@@ -44,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     email: {
       type: DataTypes.STRING,
+      allowNull: false,
       unique: {
         msg: 'The email you entered already exists.'
       },
@@ -55,6 +58,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     password: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
         is: {
           args: /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/,
@@ -65,6 +69,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
+    tableName: 'users'
   });
   return User;
 };
