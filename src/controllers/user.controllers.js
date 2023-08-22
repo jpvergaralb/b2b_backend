@@ -25,7 +25,14 @@ const getUser = async (req, res) => {
 };
 
 const postUser = async (req, res) => {
-  res.send('Creating user');
+  try {
+    const {firstName, lastName, email, password} = req.body;
+    const user = await User.create({ firstName, lastName, email, password });
+    res.status(201).json({ user });
+  } catch (error) {
+    res.status(500).json({ error });
+
+  }
 };
 
 const inscribeUserToCourse = async (req, res) => {
@@ -43,11 +50,11 @@ const inscribeUserToCourse = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  res.send(`Updating user ${req.params.id}`);
+  res.status(200).send(`Updating user ${req.params.id}`);
 };
 
 const deleteUser = async (req, res) => {
-  res.send(`Deleting user ${req.params.id}`);
+  res.status(200).send(`Deleting user ${req.params.id}`);
 };
 
 module.exports = {
