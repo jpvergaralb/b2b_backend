@@ -31,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
         notNull: {
           msg: 'Please enter your first name.'
         },
+        len: {
+          args: [2, 50],
+          msg: 'First name must be between 2 and 50 characters long.'
+        }
       }
     },
     lastName: {
