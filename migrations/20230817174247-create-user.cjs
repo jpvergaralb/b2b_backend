@@ -10,7 +10,20 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       firstName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: 'Please enter your first name.'
+          },
+          notNull: {
+            msg: 'Please enter your first name.'
+          },
+          len: {
+            args: [2, 50],
+            msg: 'First name must be between 2 and 50 characters long.'
+          }
+        }
       },
       lastName: {
         type: Sequelize.STRING
