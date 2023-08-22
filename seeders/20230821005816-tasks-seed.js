@@ -43,8 +43,8 @@ module.exports = {
     const fakeTasks = []
 
 
-    for (let i = 0; i < 100; i++) {
-      fakeTasks.push(createRandomTask(5, tasktemplates[i].id))
+    for (let i = 11; i < 100; i++) {
+      fakeTasks.push(createRandomTask(5, 11))
     }
 
 
