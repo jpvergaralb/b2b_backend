@@ -5,7 +5,9 @@ const { User, Course } = db;
 
 const getUsers = async (req, res) => {
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({
+      order: [['createdAt', 'DESC']],
+    });
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ error });
@@ -54,7 +56,16 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  res.status(200).send(`Deleting user ${req.params.id}`);
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) {
+      res.status(404).send(`User ${req.params.id} not found`);
+    }
+    await user.destroy();
+    res.status(200).send(`User ${req.params.id} deleted`);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 };
 
 module.exports = {
