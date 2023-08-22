@@ -16,6 +16,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - db_testing
   db:
     image: postgres:14.9
     volumes:
@@ -28,5 +29,18 @@ services:
     ports:
       - "5434:5432"
 
+  db_testing:
+    image: postgres:14.9
+    volumes:
+      - testing_data:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_DB: realtesting
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+
 volumes:
   postgres_data:
+  testing_data:
