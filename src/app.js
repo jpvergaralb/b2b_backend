@@ -1,4 +1,5 @@
 const express = require('express');
+const welcomeRoutes = require('./routes/welcome.routes');
 const userRoutes = require('./routes/user.routes');
 const courseRouter = require('./routes/course.routes');
 const taskRoutes = require('./routes/task.routes');
@@ -12,6 +13,7 @@ app.use(requestLoggerMiddleware);
 app.use(express.json());
 
 // Routes
+app.use('/', welcomeRoutes)
 app.use('/users', userRoutes);
 app.use('/courses', courseRouter);
 app.use('/tasks', taskRoutes);
