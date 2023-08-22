@@ -37,7 +37,7 @@ module.exports = {
     const fakeTaskTemplates = []
 
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 100; i++) {
       fakeTaskTemplates.push(createRandomTaskTemplate(5))
     }
 
