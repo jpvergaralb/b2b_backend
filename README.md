@@ -545,7 +545,16 @@ Al hacer asociaciones se crean metodos automaticamente. Por ejemplo si tenemos u
 **ALGO CLAVE** 
 > ES NECESARIO PONER LA REFERENCIA DE LA KEY FORANEA TANTO EN EL SOURCE COMO EN EL TARGET. USUALMENTE EN LAS DOCUMENTACIONES SOLO SE PONE EN UNO. ESTO NO FUNCIONARA, AL MENOS NO SIEMPRE.  
 
-Respecto a las migraciones. Si por ejemplo quisiese agregar mas validaciones a alguna clumna, entonces tendria que correr una migracion modifcando esa columan en especfiico, de lo ocontrario no hay manera de "sincronizar" la base de datos.
+Respecto a las migraciones. Si por ejemplo quisiese agregar mas validaciones a alguna columna, entonces tendria que correr una migracion modificando esa columna en especfiico, de lo contrario no hay manera de "sincronizar" la base de datos. Entonces para agregar validaciones a traves de migraciones se sigue la siguiente sintaxis:
+```js
+
+//up
+ queryInterface.addConstraint('tableName', options);
+
+//down
+  queryInterface.removeConstraint('tableName', 'constraintName');
+  
+```
 
 #### Agregue un linter: eslint
 Para instalarlo use `npm i eslint -D`
