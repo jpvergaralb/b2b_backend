@@ -11,7 +11,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env: # Definición de variables de entorno aquí
+    env:
       DB_NAME: testing
       TEST_DB_NAME: realtesting
       DB_USERNAME: postgres
@@ -26,6 +26,12 @@ jobs:
     - name: Build and Run Containers
       run: |
         docker-compose up -d
+    - name: Wait for PostgreSQL to become available
+      run: |
+        until PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USERNAME -p $DB_PORT -d $DB_NAME -c '\q'; do
+          echo "PostgreSQL not ready yet, sleeping for 5 seconds..."
+          sleep 5
+        done
     - name: Install Dependencies
       run: npm ci
     - name: Run Migrations 
