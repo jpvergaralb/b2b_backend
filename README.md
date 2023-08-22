@@ -545,6 +545,8 @@ Al hacer asociaciones se crean metodos automaticamente. Por ejemplo si tenemos u
 **ALGO CLAVE** 
 > ES NECESARIO PONER LA REFERENCIA DE LA KEY FORANEA TANTO EN EL SOURCE COMO EN EL TARGET. USUALMENTE EN LAS DOCUMENTACIONES SOLO SE PONE EN UNO. ESTO NO FUNCIONARA, AL MENOS NO SIEMPRE.  
 
+Respecto a las migraciones. Si por ejemplo quisiese agregar mas validaciones a alguna clumna, entonces tendria que correr una migracion modifcando esa columan en especfiico, de lo ocontrario no hay manera de "sincronizar" la base de datos.
+
 #### Agregue un linter: eslint
 Para instalarlo use `npm i eslint -D`
 Luego hice `npx eslint --init` y elegi la config de `airbnb`
@@ -561,7 +563,16 @@ Ahora para crear un seed file podemos correr el comando `npx sequelize-cli seed:
 
 #### Preparacion para el CI/CD
 ##### Antes de implementar CI:
-Para este paso necesitamos primero tener pruebas. Para ello usaremos `jest` y `supertest`. Este ultimo sirve para testear metodos `HTTP` lo cual nos permitira testear nuestros endpoints. Estare siguiendo la guia recomendada para express propuesta en la documentacion oficial de jest.
+Para este paso necesitamos primero tener pruebas. Para ello usaremos `jest` y `supertest`. Tambien instalmos `superagent` que sirve por ejemplo cuando queremos testear autenticacion, pero eso sera para mas adelante. Este ultimo sirve para testear metodos `HTTP` lo cual nos permitira testear nuestros endpoints. Estare siguiendo la guia recomendada para express propuesta en la documentacion oficial de jest.
+
+#### Testing
+para testear se comienda separar el server.js en dos archivos: app.js y server.js. De lo contrario el servidor dejara de escuchar una vez se ejecuta un test. Para ello, dejamos todo excepto el `app.listen` en app.js, lo exportamos y hacemos el listen en `server.js`.
+
+Ahora debemos armar un entorno de desarollo. Para este proyecto implica agregar variables de entorno nuevas el el `config.js`. Ademas, tendremo que usar una base de datos exlucsivamente dedicada a testing. Para ello debemos crearla a mano y referenciar su nombre en las variables de entorno.
+
+Para testear, como mencione, usare supertest. Aqui es crucial consultar la docuemntacion para ver exacatamente que informacion se debe entregar en cada request. Es decir, si enviamos un post sin body es posible que de un error. Por ejemplo si mandamos alguna request que requiera de algun parametro, como el id. Al hacer simplemente un post esta informacion no viene por defecto, debemos colocarla nosotros. Por ello, se usaran como referencias los ejemplos del a documentacion: `https://www.npmjs.com/package/supertest`
+
+
 
 - ### Cosas por hacer
 
