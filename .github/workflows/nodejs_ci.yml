@@ -11,6 +11,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env: # Definición de variables de entorno aquí
+      DB_NAME: testing
+      TEST_DB_NAME: realtesting
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: localhost
+      DB_PORT: 5432
+      NODE_ENV: development
+      PORT: 8000
+
     steps:
     - uses: actions/checkout@v3
     - name: Build and Run Containers
