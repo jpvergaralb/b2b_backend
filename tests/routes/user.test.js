@@ -4,7 +4,7 @@ const app = require("../../src/app");
 const mockUser = {
     firstName: "John",
     lastName: "Doe",
-    email: "testingUser@gmail.com",
+    email: "testingUser2@gmail.com",
     password: "1234545454gdfgdfgFDDGDFGd!!!"
 }
 
