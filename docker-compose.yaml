@@ -3,7 +3,7 @@ services:
   api:
     build: .
     environment:
-      - DB_NAME=testing
+      - DB_NAME=postgres
       - TEST_DB_NAME=realtesting
       - DB_USERNAME=postgres
       - DB_PASSWORD=postgres
