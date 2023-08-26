@@ -570,7 +570,7 @@ para probar que todo este en orden se puede rellenar la base de datos con valore
 Ahora para crear un seed file podemos correr el comando `npx sequelize-cli seed:generate --name file-name`. Luego para correr las seeds se usa `npx sequelize-cli seed:all`
 
 
-#### Preparacion para el CI/CD
+### Preparacion para el CI/CD: por ahora en hold
 ##### Antes de implementar CI:
 Para este paso necesitamos primero tener pruebas. Para ello usaremos `jest` y `supertest`. Tambien instalmos `superagent` que sirve por ejemplo cuando queremos testear autenticacion, pero eso sera para mas adelante. Este ultimo sirve para testear metodos `HTTP` lo cual nos permitira testear nuestros endpoints. Estare siguiendo la guia recomendada para express propuesta en la documentacion oficial de jest.
 
@@ -581,20 +581,22 @@ Ahora debemos armar un entorno de desarollo. Para este proyecto implica agregar 
 
 Para testear, como mencione, usare supertest. Aqui es crucial consultar la docuemntacion para ver exacatamente que informacion se debe entregar en cada request. Es decir, si enviamos un post sin body es posible que de un error. Por ejemplo si mandamos alguna request que requiera de algun parametro, como el id. Al hacer simplemente un post esta informacion no viene por defecto, debemos colocarla nosotros. Por ello, se usaran como referencias los ejemplos del a documentacion: `https://www.npmjs.com/package/supertest`
 
+### Autenticacion
+Para esto usaremos `jsonwebtoken` y `bcrypt`.
 
 
 - ### Cosas por hacer
 
 - Conectar a base de datos postgresql [done]
 - Agregar sequelize como ORM [done]
-- Crear tres modelos basicos: User, Subject, Task [x]
-- Crear asociaciones entre los modelos: User hasMany Subject, Subject hasMany Task, Task belongsTo Subject, Subject belongsTo User [x]
+- Crear tres modelos basicos: User, Subject, Task [done]
+- Crear asociaciones entre los modelos: User hasMany Subject, Subject hasMany Task, Task belongsTo Subject, Subject belongsTo User [done]
 
-- Agregar seeders para poblar la base de datos [x]
-- Agregar validaciones a los modelos [x]
-- Agregar migraciones para crear las tablas en la base de datos 
-- Agregar CI/CD
-- Preparar terreno para autenticacion (bcrypt, jsonwebtoken, cookie-parser, cors)
+- Agregar seeders para poblar la base de datos [done]
+- Agregar validaciones a los modelos [done]
+- Agregar migraciones para crear las tablas en la base de datos [done]
+- Agregar CI/CD [ON HOLD]
+- Preparar terreno para autenticacion (bcrypt, jsonwebtoken, cookie-parser, cors) [doing]
 - Configurar cookies y cors
 - Actualizar el modelo de User para tener un metodo que verifique si la contraseña es correcta
 - Crear un controlador para el modelo User que tenga un metodo para registrar un usuario y otro para loggear un usuario
