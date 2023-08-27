@@ -584,6 +584,8 @@ Para testear, como mencione, usare supertest. Aqui es crucial consultar la docue
 ### Autenticacion
 Para esto usaremos `jsonwebtoken` y `bcrypt`.
 
+- Para encriptar la contrasena, hacer un metodo de clase para el user.
+
 
 - ### Cosas por hacer
 
