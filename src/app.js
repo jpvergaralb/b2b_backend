@@ -1,4 +1,5 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const welcomeRoutes = require('./routes/welcome.routes');
 const userRoutes = require('./routes/user.routes');
 const courseRouter = require('./routes/course.routes');
@@ -10,6 +11,7 @@ const app = express();
 
 // Middlewares
 app.use(requestLoggerMiddleware);
+app.use(cookieParser());
 app.use(express.json());
 
 // Routes
