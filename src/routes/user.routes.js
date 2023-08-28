@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express')
 const {
   getUser,
   getUsers,
@@ -7,27 +7,27 @@ const {
   updateUser,
   deleteUser,
   inscribeUserToCourse,
-} = require('../controllers/user.controllers');
+} = require('../controllers/user.controllers')
 
-const validateToken = require('../middlewares/validateAuthToken.middleware');
+const validateToken = require('../middlewares/validateAuthToken.middleware')
 
-const userRoutes = express.Router();
+const userRoutes = express.Router()
 
 userRoutes.route('/')
   .get(getUsers)
-  
+
 userRoutes.route('/signup')
-  .post(postUser);
+  .post(postUser)
 
 userRoutes.route('/me')
-  .get(validateToken, getUser);
+  .get(validateToken, getUser)
 
 userRoutes.route('/login')
-  .post(loginUser);
+  .post(loginUser)
 
 userRoutes.route('/:id')
   .put(updateUser)
   .delete(deleteUser)
-  .post(inscribeUserToCourse);
+  .post(inscribeUserToCourse)
 
-module.exports = userRoutes;
+module.exports = userRoutes

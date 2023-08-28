@@ -11,6 +11,7 @@ module.exports = {
       },
       files: [
         '.eslintrc.{js,cjs}',
+        'src/**/*.js',
       ],
       parserOptions: {
         sourceType: 'script',
@@ -22,5 +23,6 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'semi': ['error', 'never'],
   },
 };

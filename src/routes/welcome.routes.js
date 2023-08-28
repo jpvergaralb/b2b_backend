@@ -1,13 +1,11 @@
 const express = require('express')
 const {
-    getWelcome
-}
-= require('../controllers/welcome.controller')
+  getWelcome,
+} = require('../controllers/welcome.controller')
 
-const welcomeRouter = express.Router();
-
+const welcomeRouter = express.Router()
 
 welcomeRouter.route('/')
-    .get(getWelcome)
+  .get(getWelcome)
 
 module.exports = welcomeRouter
