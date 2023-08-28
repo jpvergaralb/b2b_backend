@@ -17,8 +17,14 @@ const getUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
   try {
-    const { user } = req
-    res.status(200).json(user)
+    const { userPayload } = req
+    const user = await User.findByPk(userPayload.id, {
+      attributes: { exclude: ['password'] },
+    })
+    const courses = await user.getCourses()
+    const tasks = await user.getTasks()
+
+    res.status(200).json({ user, courses, tasks })
   } catch (error) {
     res.status(500).json({ error })
   }
