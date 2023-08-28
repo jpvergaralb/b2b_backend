@@ -12,7 +12,7 @@ const validateToken = (req, res, next) => {
     // we check if the token is valid. If its not it will throw an error
     const verifiedToken = jwt.verify(token, process.env.JWT_SECRET)
     // if its valid then we create a new property called 'user' and give it the value of the token
-    req.user = verifiedToken
+    req.userPayload = verifiedToken
     next()
   } catch (error) {
     res.status(403).json({ error: 'Invalid token' })
