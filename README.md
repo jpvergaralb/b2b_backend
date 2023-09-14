@@ -607,7 +607,7 @@ Para esto usaremos `jsonwebtoken` y `bcrypt`.
 - Crear un controlador para el modelo Subject que tenga un metodo para crear un subject, otro para obtener todos los subjects de un usuario y otro para eliminar un subject
 - Crear un middleware de autenticacion para proteger las rutas
 - Aplicar el middleware de autenticacion a las rutas de subjects y tasks
-
+- test commit
 
 #### Validaciones utiles
 is / isNot: Permite especificar una expresión regular (regex) que el valor debe cumplir.
