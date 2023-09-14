@@ -1,23 +1,33 @@
-const express = require('express');
+const express = require('express')
 const {
   getUser,
   getUsers,
+  loginUser,
   postUser,
   updateUser,
   deleteUser,
   inscribeUserToCourse,
-} = require('../controllers/user.controllers');
+} = require('../controllers/user.controllers')
 
-const userRoutes = express.Router();
+const validateToken = require('../middlewares/validateAuthToken.middleware')
+
+const userRoutes = express.Router()
 
 userRoutes.route('/')
   .get(getUsers)
-  .post(postUser);
+
+userRoutes.route('/signup')
+  .post(postUser)
+
+userRoutes.route('/me')
+  .get(validateToken, getUser)
+
+userRoutes.route('/login')
+  .post(loginUser)
 
 userRoutes.route('/:id')
-  .get(getUser)
   .put(updateUser)
   .delete(deleteUser)
-  .post(inscribeUserToCourse);
+  .post(inscribeUserToCourse)
 
-module.exports = userRoutes;
+module.exports = userRoutes

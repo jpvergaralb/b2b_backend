@@ -582,7 +582,43 @@ Ahora debemos armar un entorno de desarollo. Para este proyecto implica agregar 
 Para testear, como mencione, usare supertest. Aqui es crucial consultar la docuemntacion para ver exacatamente que informacion se debe entregar en cada request. Es decir, si enviamos un post sin body es posible que de un error. Por ejemplo si mandamos alguna request que requiera de algun parametro, como el id. Al hacer simplemente un post esta informacion no viene por defecto, debemos colocarla nosotros. Por ello, se usaran como referencias los ejemplos del a documentacion: `https://www.npmjs.com/package/supertest`
 
 ### Autenticacion
-Para esto usaremos `jsonwebtoken` y `bcrypt`.
+Para esto usaremos `jsonwebtoken` y `bcryptjs`. El primer es para generar tokens, que serviran como "tickets" para confirmar que un usuario esta autorizado para realizar alguna accion, como acceder una ruta. El segundo es para encriptar contraseñas. Respecto a esto ultimo, haremos un pequeño cambio a la forma en que opera el modelo `User`. Por ahora vemos estado guardando las contrasenas directamente. Esto es muy muy poco seguro ya que si por algun motivo hay un leak de nuestras bases de datos, las contrasenas quedaran expuestas. Entonces la forma en que operaremos, sera que cuando un usuario envie un json con sus datos como nombre, email y contrasena, tomaremos la contrasena, la hashearemos y guardaremos le hash. Entonces, cuando hagamos login y cosas, tomaremos ese hash, y lo compararemos con el hash de la contrasena que nos llegue en ese momento. Si hay un match, entonces esa era.
+
+#### Bcrypt: hasheo de contrasenas
+Para esto, hay varias formas de hashear la contrasena. Pero en principio podemos hacer esta operacion en el controlador, o bien en el modelo `User`. A  mi me parece mejor hacerlo en el modelo. Para esto podemos simplemente definir un metodo, pero me parece mucho mas interesante aprender sobre los `hooks` de `Sequelize`. 
+
+###### Hooks: https://sequelize.org/docs/v6/other-topics/hooks/
+Los hooks son funciones que se gatillan automaticamente en algun punto del ciclo de vida de un modelo. Por ejempo antes de la creacion `beforeCreate`, despues de la creacion `afterCreate`, antes de la actualizacion `beforeUpdate`, etc. En este caso, queremos que antes de crear un usuario, se hashee la contrasena. Entonces usaremos el hook `beforeCreate`. Entonces, en el modelo `User` podemos agregar lo siguiente:
+```js
+User.addHook('beforeCreate', async (user, options) => {
+  const hashedPassword = await bcrypt.hash(user.password, 10)
+  user.password = hashedPassword
+})
+```
+Ademas, tendremos que agregar el mismo metodo para un `afterUpdate`.
+Fiinalmente, sera necesario agregar un metodo para comprobar si una password es valida. En particular se deben ver asi:
+```js
+User.prototype.isPasswordValid = async function(password) {
+  return await bcrypt.compare(password, this.password);
+}
+```
+Ahora estamos listos para JWT.
+
+#### JWT: autenticacion
+Primero que todo, en este punto descubri algo super interesante. El orden de las rutas en express es super importante. En particular, las rutas que reciben parametros deben ir siempre al final, sino, se podria interpretar una ruta como un parametro. Por ejemplo
+```js
+router.get('/users/:id', (req, res) => {
+  res.send('user id')
+})
+
+router.get('/users/all', (req, res) => {
+  res.send('all users')
+})
+```
+Seria valido, pero al reves habria problemas para consultar a `/users/all`. Esto es porque el router interpretaria `all` como un parametro.
+
+Ahora. Tenemos dos formas de enviar el token al cliente: con cookies o con headers. Para este caso se usaran cookies. Para ello, primero debemos instalar `cookie-parser`. Luego, en el archivo `app.js` debemos agregar `app.use(cookieParser())`. 
+
 
 
 - ### Cosas por hacer
